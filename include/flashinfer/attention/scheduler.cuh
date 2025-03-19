@@ -69,7 +69,7 @@ inline auto PartitionPagedKVCacheBinarySearchMinNumPagePerBatch(
     const uint32_t min_num_pages_per_batch = 1) {
   uint32_t low = min_num_pages_per_batch, high = 0;
   for (const IdType& elem : num_pages) {
-    high = max(high, elem);
+    high = std::max(high, (unsigned int)elem);
   }
   uint32_t new_batch_size;
   while (low < high) {

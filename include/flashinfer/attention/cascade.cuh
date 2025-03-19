@@ -668,7 +668,7 @@ cudaError_t VariableLengthMergeStates(DTypeIn* v, float* s, IdType* indptr, DTyp
                                                             DTypeIn, DTypeO, IdType>;
     FLASHINFER_CUDA_CALL(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&num_blocks_per_sm, kernel,
                                                                        num_threads, smem_size));
-    num_blocks_per_sm = min(num_blocks_per_sm, ceil_div(max_seq_len * num_heads, num_sms));
+    num_blocks_per_sm = std::min((unsigned int)num_blocks_per_sm, ceil_div(max_seq_len * num_heads, num_sms));
 
     dim3 nblks(num_sms * num_blocks_per_sm);
     dim3 nthrs(bdx, bdy);
@@ -701,7 +701,7 @@ cudaError_t VariableLengthAttentionSum(DTypeIn* v, IdType* indptr, DTypeO* v_sum
                                                              DTypeIn, DTypeO, IdType>;
     FLASHINFER_CUDA_CALL(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&num_blocks_per_sm, kernel,
                                                                        num_threads, smem_size));
-    num_blocks_per_sm = min(num_blocks_per_sm, ceil_div(max_seq_len * num_heads, num_sms));
+    num_blocks_per_sm = std::min((unsigned int)num_blocks_per_sm, ceil_div(max_seq_len * num_heads, num_sms));
 
     dim3 nblks(num_sms * num_blocks_per_sm);
     dim3 nthrs(bdx, bdy);

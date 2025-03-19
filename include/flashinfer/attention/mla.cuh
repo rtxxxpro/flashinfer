@@ -159,7 +159,7 @@ __device__ __forceinline__ void load_q(
           q_smem_nope.template get_permuted_offset<UPCAST_STRIDE_Q_NOPE>(
               32 * mma_q + warpgroup_idx * 16 + warp_idx_in_wg * 4 + lane_idx / 8,
               mma_d * 8 + lane_idx % 8);
-      q_smem_nope.load_128b_async<SharedMemFillMode::kFillZero>(q_smem_nope_offset_w, q_nope_ptr,
+      q_smem_nope.template load_128b_async<SharedMemFillMode::kFillZero>(q_smem_nope_offset_w, q_nope_ptr,
                                                                 q < q_len);
       q_nope_ptr += 8 * upcast_size<DTypeQ>();
     }
@@ -169,7 +169,7 @@ __device__ __forceinline__ void load_q(
           32 * mma_q + warpgroup_idx * 16 + warp_idx_in_wg * 4 + lane_idx / 8,
           mma_d * 8 + lane_idx % 8);
 
-      q_smem_pe.load_128b_async<SharedMemFillMode::kFillZero>(q_smem_pe_offset_w, q_pe_ptr,
+      q_smem_pe.template load_128b_async<SharedMemFillMode::kFillZero>(q_smem_pe_offset_w, q_pe_ptr,
                                                               q < q_len);
       q_pe_ptr += 8 * upcast_size<DTypeQ>();
     }
@@ -210,7 +210,7 @@ __device__ __forceinline__ void load_kv(
       for (uint32_t mma_d = 0; mma_d < KTraits::NUM_MMA_D_CKV / 4; ++mma_d) {
         uint32_t ckv_smem_offset_w = ckv_smem.template get_permuted_offset<UPCAST_STRIDE_CKV>(
             warp_idx_in_wg * 4 + lane_idx / 8, 8 * mma_d + lane_idx % 8);
-        ckv_smem.load_128b_async<SharedMemFillMode::kFillZero>(ckv_smem_offset_w, ckv_ptr,
+        ckv_smem.template load_128b_async<SharedMemFillMode::kFillZero>(ckv_smem_offset_w, ckv_ptr,
                                                                q < kv_bound);
         ckv_ptr += 8 * upcast_size<DTypeKV>();
       }
@@ -219,7 +219,7 @@ __device__ __forceinline__ void load_kv(
       for (uint32_t mma_d = 0; mma_d < KTraits::NUM_MMA_D_KPE / 4; ++mma_d) {
         uint32_t kpe_smem_offset_w = kpe_smem.template get_permuted_offset<UPCAST_STRIDE_KPE>(
             warp_idx_in_wg * 4 + lane_idx / 8, 8 * mma_d + lane_idx % 8);
-        kpe_smem.load_128b_async<SharedMemFillMode::kFillZero>(kpe_smem_offset_w, kpe_ptr,
+        kpe_smem.template load_128b_async<SharedMemFillMode::kFillZero>(kpe_smem_offset_w, kpe_ptr,
                                                                q < kv_bound);
         kpe_ptr += 8 * upcast_size<DTypeKV>();
       }
@@ -243,7 +243,7 @@ __device__ __forceinline__ void load_kv(
         uint32_t ckv_smem_offset_w = ckv_smem.template get_permuted_offset<UPCAST_STRIDE_CKV>(
             32 * mma_kv + warpgroup_idx * 16 + warp_idx_in_wg * 4 + lane_idx / 8,
             8 * mma_d + lane_idx % 8);
-        ckv_smem.load_128b_async<SharedMemFillMode::kFillZero>(ckv_smem_offset_w, ckv_ptr,
+        ckv_smem.template load_128b_async<SharedMemFillMode::kFillZero>(ckv_smem_offset_w, ckv_ptr,
                                                                q < kv_bound);
         ckv_ptr += 8 * upcast_size<DTypeKV>();
       }
@@ -253,7 +253,7 @@ __device__ __forceinline__ void load_kv(
         uint32_t kpe_smem_offset_w = kpe_smem.template get_permuted_offset<UPCAST_STRIDE_KPE>(
             32 * mma_kv + warpgroup_idx * 16 + warp_idx_in_wg * 4 + lane_idx / 8,
             8 * mma_d + lane_idx % 8);
-        kpe_smem.load_128b_async<SharedMemFillMode::kFillZero>(kpe_smem_offset_w, kpe_ptr,
+        kpe_smem.template load_128b_async<SharedMemFillMode::kFillZero>(kpe_smem_offset_w, kpe_ptr,
                                                                q < kv_bound);
         kpe_ptr += 8 * upcast_size<DTypeKV>();
       }
@@ -493,7 +493,7 @@ __device__ __forceinline__ void compute_mla_pv(typename KTraits::SharedStorage* 
     alignas(16) typename KTraits::DTypeKV p_f16[NUM_MMA_KV / 2][8];
 #pragma unroll
     for (uint32_t mma_kv = 0; mma_kv < NUM_MMA_KV / 2; ++mma_kv) {
-      vec_cast<typename KTraits::DTypeKV, float>::cast<8>(p_f16[mma_kv], s_frag[mma_kv]);
+      vec_cast<typename KTraits::DTypeKV, float>::template cast<8>(p_f16[mma_kv], s_frag[mma_kv]);
       mma::m16k16_rowsum_f16f16f32(d, p_f16[mma_kv]);
     }
 
@@ -548,7 +548,7 @@ __device__ __forceinline__ void compute_mla_pv(typename KTraits::SharedStorage* 
     alignas(16) typename KTraits::DTypeKV p_f16[NUM_MMA_KV][8];
 #pragma unroll
     for (uint32_t mma_kv = 0; mma_kv < NUM_MMA_KV; ++mma_kv) {
-      vec_cast<typename KTraits::DTypeKV, float>::cast<8>(p_f16[mma_kv], s_frag[mma_kv]);
+      vec_cast<typename KTraits::DTypeKV, float>::template cast<8>(p_f16[mma_kv], s_frag[mma_kv]);
       mma::m16k16_rowsum_f16f16f32(d, p_f16[mma_kv]);
     }
 #pragma unroll
@@ -680,7 +680,7 @@ __device__ __forceinline__ void write_o(typename KTraits::SharedStorage* smem_st
 #pragma unroll
   for (uint32_t mma_d = 0; mma_d < NUM_MMA_D_CKV / 2; ++mma_d) {
     uint32_t o_frag_f16[8 / 2];
-    vec_cast<DTypeO, float>::cast<8>((DTypeO*)o_frag_f16, o_frag[mma_d]);
+    vec_cast<DTypeO, float>::template cast<8>((DTypeO*)o_frag_f16, o_frag[mma_d]);
 #ifdef FLASHINFER_STMATRIX_M8N8X4_ENABLED
     uint32_t o_smem_offset_w = o_smem.template get_permuted_offset<UPCAST_STRIDE_FINAL_O>(
         warp_idx_in_wg * 16 + lane_idx % 16,

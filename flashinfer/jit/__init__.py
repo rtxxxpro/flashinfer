@@ -53,7 +53,7 @@ from .env import *
 from .utils import parallel_load_modules as parallel_load_modules
 
 try:
-    from .. import flashinfer_kernels, flashinfer_kernels_sm90  # noqa: F401
+    from .. import flashinfer_kernels #, flashinfer_kernels_sm90  # noqa: F401
     from .aot_config import prebuilt_ops_uri as prebuilt_ops_uri
 
     has_prebuilt_ops = True

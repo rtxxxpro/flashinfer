@@ -26,7 +26,7 @@ using namespace flashinfer;
 template <typename dtype_f8, typename dtype_f16>
 __global__ void test_fast_f8_f16_dequant(dtype_f8* f8, dtype_f16* f16) {
   size_t global_tidx = blockIdx.x * blockDim.x + threadIdx.x;
-  vec_cast<dtype_f16, dtype_f8>::cast<8>(f16 + global_tidx * 8, f8 + global_tidx * 8);
+  vec_cast<dtype_f16, dtype_f8>::template cast<8>(f16 + global_tidx * 8, f8 + global_tidx * 8);
 }
 
 template <typename dtype_f8, typename dtype_f16>

@@ -165,7 +165,7 @@ if enable_aot:
 
     # cuda arch check for fp8 at the moment.
     for cuda_arch_flags in torch_cpp_ext._get_cuda_arch_flags():
-        arch = int(re.search(r"compute_(\d+)", cuda_arch_flags).group(1))
+        arch = int(re.search(r"sm_(\d+)", cuda_arch_flags).group(1))
         if arch < 75:
             raise RuntimeError("FlashInfer requires sm75+")
 
@@ -217,17 +217,18 @@ if enable_aot:
     nvcc_flags = [
         "-O3",
         "-std=c++17",
-        "--threads=1",
-        "-Xfatbin",
-        "-compress-all",
-        "-use_fast_math",
-        "-DPy_LIMITED_API=0x03080000",
+        # "--threads=1",
+        # "-Xfatbin",
+        # "-compress-all",
+        # "-use_fast_math",
+        # "-DPy_LIMITED_API=0x03080000",
     ]
     libraries = [
         "cublas",
         "cublasLt",
     ]
-    sm90a_flags = "-gencode arch=compute_90a,code=sm_90a".split()
+    # sm90a_flags = "-gencode arch=compute_90a,code=sm_90a".split()
+    sm90a_flags = "--cuda-gpu-arch=sm_90a".split()
     kernel_sources = [
         "csrc/bmm_fp8.cu",
         "csrc/cascade.cu",

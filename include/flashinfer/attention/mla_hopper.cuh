@@ -155,14 +155,14 @@ __device__ __forceinline__ void load_q(
 
 #pragma unroll
       for (uint32_t mma_d = 0; mma_d < KTraits::NUM_MMA_D_CKV / 4; ++mma_d) {
-        q_smem_nope.load_128b_async<SharedMemFillMode::kFillZero>(q_smem_nope_offset_w, q_nope_ptr,
+        q_smem_nope.template load_128b_async<SharedMemFillMode::kFillZero>(q_smem_nope_offset_w, q_nope_ptr,
                                                                   q < q_len);
         q_smem_nope_offset_w += 64;
         q_nope_ptr += 8 * upcast_size<DTypeQ>();
       }
 #pragma unroll
       for (uint32_t mma_d = 0; mma_d < KTraits::NUM_MMA_D_KPE / 4; ++mma_d) {
-        q_smem_pe.load_128b_async<SharedMemFillMode::kFillZero>(q_smem_pe_offset_w, q_pe_ptr,
+        q_smem_pe.template load_128b_async<SharedMemFillMode::kFillZero>(q_smem_pe_offset_w, q_pe_ptr,
                                                                 q < q_len);
         q_smem_pe_offset_w += 64;
         q_pe_ptr += 8 * upcast_size<DTypeQ>();
@@ -211,10 +211,10 @@ __device__ __forceinline__ void load_kv(
 #pragma unroll
       for (uint32_t mma_d = 0; mma_d < KTraits::NUM_MMA_D_CKV / 4; ++mma_d) {
         if constexpr (predicate) {
-          ckv_smem.load_128b_async<SharedMemFillMode::kFillZero>(ckv_smem_offset_w, ckv_ptr,
+          ckv_smem.template load_128b_async<SharedMemFillMode::kFillZero>(ckv_smem_offset_w, ckv_ptr,
                                                                  q < kv_bound);
         } else {
-          ckv_smem.load_128b_async(ckv_smem_offset_w, ckv_ptr);
+          ckv_smem.template load_128b_async(ckv_smem_offset_w, ckv_ptr);
         }
         ckv_smem_offset_w += 64;
         ckv_ptr += 8 * upcast_size<DTypeKV>();
@@ -223,10 +223,10 @@ __device__ __forceinline__ void load_kv(
 #pragma unroll
       for (uint32_t mma_d = 0; mma_d < KTraits::NUM_MMA_D_KPE / 4; ++mma_d) {
         if constexpr (predicate) {
-          kpe_smem.load_128b_async<SharedMemFillMode::kFillZero>(kpe_smem_offset_w, kpe_ptr,
+          kpe_smem.template load_128b_async<SharedMemFillMode::kFillZero>(kpe_smem_offset_w, kpe_ptr,
                                                                  q < kv_bound);
         } else {
-          kpe_smem.load_128b_async(kpe_smem_offset_w, kpe_ptr);
+          kpe_smem.template load_128b_async(kpe_smem_offset_w, kpe_ptr);
         }
         kpe_smem_offset_w += 64;
         kpe_ptr += 8 * upcast_size<DTypeKV>();
@@ -488,7 +488,7 @@ __device__ __forceinline__ void write_o(typename KTraits::SharedStorage* smem_st
 #pragma unroll
   for (uint32_t k = 0; k < HEAD_DIM_CKV / 32; ++k) {
     uint32_t o_frag_f16[8 / 2];
-    vec_cast<DTypeO, float>::cast<8>((DTypeO*)o_frag_f16, &o_frag[k * 8]);
+    vec_cast<DTypeO, float>::template cast<8>((DTypeO*)o_frag_f16, &o_frag[k * 8]);
     uint32_t o_smem_offset_w = get_swizzle_offset<KTraits::SWIZZLE_MODE_O, UPCAST_STRIDE_FINAL_O>(
         (warp_idx_in_wg % 2) * 16 + lane_idx % 16,
         (warp_group_idx - 1) * NUM_MMA_D_CKV + k * 2 + lane_idx / 16);
@@ -578,7 +578,7 @@ template <typename KTraits>
 __device__ __forceinline__ void convert_s_to_p(float* s_frag, uint32_t* p_frag) {
 #pragma unroll
   for (uint32_t i = 0; i < KTraits::NUM_REGS_S_FRAG / 8; ++i) {
-    vec_cast<typename KTraits::DTypeKV, float>::cast<8>(
+    vec_cast<typename KTraits::DTypeKV, float>::template cast<8>(
         ((typename KTraits::DTypeKV*)p_frag) + i * 8, s_frag + i * 8);
   }
 }

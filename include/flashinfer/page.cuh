@@ -396,7 +396,7 @@ cudaError_t AppendPagedKVCache(paged_kv_t<DType, IdType> paged_kv, DType* append
     auto kernel = AppendPagedKVCacheKernel<HEAD_DIM, vec_size, DType, IdType>;
     FLASHINFER_CUDA_CALL(cudaOccupancyMaxActiveBlocksPerMultiprocessor(&num_blocks_per_sm, kernel,
                                                                        num_threads, smem_size));
-    num_blocks_per_sm = min(num_blocks_per_sm, ceil_div(int(nnz), num_sms));
+    num_blocks_per_sm = std::min(num_blocks_per_sm, ceil_div(int(nnz), num_sms));
     dim3 nblks(num_blocks_per_sm * num_sms);
     dim3 nthrs(bdx, bdy);
 
