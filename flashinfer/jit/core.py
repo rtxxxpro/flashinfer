@@ -49,7 +49,7 @@ logger = FlashInferJITLogger("flashinfer.jit")
 def check_cuda_arch():
     # cuda arch check for fp8 at the moment.
     for cuda_arch_flags in torch_cpp_ext._get_cuda_arch_flags():
-        arch = int(re.search(r"compute_(\d+)", cuda_arch_flags).group(1))
+        arch = int(re.search(r"sm_(\d+)", cuda_arch_flags).group(1))
         if arch < 75:
             raise RuntimeError("FlashInfer requires sm75+")
 
@@ -98,8 +98,9 @@ def load_cuda_ops(
     cuda_cflags = [
         "-O3",
         "-std=c++17",
-        "--threads",
-        "4",
+        # "--threads",
+        # "4",
+        "-g",
         "-use_fast_math",
         "-DFLASHINFER_ENABLE_F16",
         "-DFLASHINFER_ENABLE_BF16",
