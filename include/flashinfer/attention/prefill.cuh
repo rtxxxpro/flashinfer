@@ -1203,7 +1203,7 @@ __device__ __forceinline__ void write_o_reg_gmem(
  */
 template <typename KTraits, typename Params>
 __global__ __launch_bounds__(KTraits::NUM_THREADS) void SinglePrefillWithKVCacheKernel(
-    const __grid_constant__ Params params) {
+    const Params params) {
   using DTypeQ = typename Params::DTypeQ;
 #if (__CUDA_ARCH__ < 800)
   if constexpr (std::is_same_v<DTypeQ, nv_bfloat16>) {
@@ -1579,7 +1579,7 @@ cudaError_t SinglePrefillWithKVCacheDispatched(Params params, typename Params::D
 
 template <typename KTraits, typename Params>
 __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchPrefillWithRaggedKVCacheKernel(
-    const __grid_constant__ Params params) {
+    const Params params) {
   using DTypeQ = typename Params::DTypeQ;
 #if (__CUDA_ARCH__ < 800)
   if constexpr (std::is_same_v<DTypeQ, nv_bfloat16>) {
@@ -1871,7 +1871,7 @@ __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchPrefillWithRaggedKV
 
 template <typename KTraits, typename Params>
 __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchPrefillWithPagedKVCacheKernel(
-    const __grid_constant__ Params params) {
+    const Params params) {
   using DTypeQ = typename Params::DTypeQ;
 #if (__CUDA_ARCH__ < 800)
   if constexpr (std::is_same_v<DTypeQ, nv_bfloat16>) {

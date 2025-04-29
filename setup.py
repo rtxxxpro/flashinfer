@@ -230,9 +230,9 @@ if enable_aot:
     # sm90a_flags = "-gencode arch=compute_90a,code=sm_90a".split()
     sm90a_flags = "--cuda-gpu-arch=sm_90a".split()
     kernel_sources = [
-        "csrc/bmm_fp8.cu",
+        # "csrc/bmm_fp8.cu",
         "csrc/cascade.cu",
-        "csrc/group_gemm.cu",
+        # "csrc/group_gemm.cu",
         "csrc/norm.cu",
         "csrc/page.cu",
         "csrc/quantization.cu",

@@ -585,7 +585,7 @@ __device__ __forceinline__ void convert_s_to_p(float* s_frag, uint32_t* p_frag) 
 
 template <typename KTraits, typename Params>
 __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPageAttentionHopperKernel(
-    const __grid_constant__ Params params) {
+    const Params params) {
   using DTypeQ = typename Params::DTypeQ;
   using DTypeKV = typename Params::DTypeKV;
   using DTypeO = typename Params::DTypeO;

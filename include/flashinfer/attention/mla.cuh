@@ -772,7 +772,7 @@ __device__ __forceinline__ void write_o(typename KTraits::SharedStorage* smem_st
 
 template <typename KTraits, typename Params>
 __global__ __launch_bounds__(KTraits::NUM_THREADS) void BatchMLAPagedAttentionKernel(
-    const __grid_constant__ Params params) {
+    const Params params) {
   using DTypeQ = typename Params::DTypeQ;
   using DTypeKV = typename Params::DTypeKV;
   using DTypeO = typename Params::DTypeO;
